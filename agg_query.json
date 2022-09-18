@@ -1,0 +1,83 @@
+async getVaccineSummaryDocs(dto: VaccineSummaryQueryDTO): Promise<Vaccine[]> {
+    // Do aggregation, project create date range
+    // this.vaccineModel.aggregate();
+    // On result map each item to  VaccineSummaryItem
+
+    /**
+        {
+            "NumberDosesReceived": "$NumberDosesReceived",
+            "year-week": { $split: ['$YearWeekISO', "-W"]},
+            // "region": "$Region"
+        },
+        {
+            "doses_received": {
+                $convert: {
+                    input: "$NumberDosesReceived",
+                    to: "int",
+                    onNull: NumberInt("0"),
+                    onError:{$concat:["Could not convert $doses_received doses_received ", {$toString:"$qty"}, " to type integer."]},
+                }
+            },
+            "year": {
+                $convert: {
+                    input: { $arrayElemAt: [ "$year-week", 0 ] },
+                    to: "int",
+                    onNull: NumberInt("0"),
+                    onError:{$concat:["Could not convert $year-week year ", {$toString:"$qty"}, " to type integer."]}
+                }
+            },
+            "week": {
+                $convert: {
+                    input: { $arrayElemAt: [ "$year-week", 1 ] },
+                    to: "int",
+                    onNull: NumberInt("0"),
+                    onError:{$concat:["Could not convert $year-week week ", {$toString:"$qty"}, " to type integer."]}
+                }
+            },
+            "date": {
+                "$dateFromParts": {
+                    'isoWeekYear': {
+                        $convert: {
+                        input: { $arrayElemAt: [ "$year-week", 0 ] },
+                        to: "int",
+                        onNull: Int32("0")
+                        }
+                    },
+                    'isoWeek':  {
+                        $convert: {
+                        input: { $arrayElemAt: [ "$year-week", 1 ] },
+                        to: "int",
+                        onNull: Int32("0")
+                        }
+                    },
+                    'isoDayOfWeek': 1,
+                    'hour': 0,
+                    'minute': 0,
+                    'second': 0,
+                    'millisecond': 0,
+                    'timezone' : 'UTC'
+                },
+            },
+            // "region": "$region"
+        },
+        {
+            "year": { "$gt": 2020 },
+            "doses_received": {$gt: 0},
+        },
+        {
+            _id: {
+                "week": "$week",
+                "year": "$year",
+                "date": "$date",
+                // "region": "$region"
+            },
+            doses_received: {
+                "$sum": "$doses_received"
+            }
+        },
+        {
+           "_id.year": 1, "_id.week": -1
+        }
+    */
+
+    // return await this.vaccineModel.find().limit(5);
